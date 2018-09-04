@@ -15,10 +15,10 @@ chrome.system.display.getInfo(function (displays) {
   screen_width = displays[0].modes[0].widthInNativePixels;
   screen_height = displays[0].modes[0].heightInNativePixels;
   use_storage.get('refresh_time', function(values) {
-    refresh_time = values.refresh_time;
-    if ( ! refresh_time ) {
+    if ( ! values.refresh_time ) {
       refresh_time = 15;
     }
+    refresh_time = parseInt(values.refresh_time);
     console.log('refreshing every ' + refresh_time + ' minutes');
     chrome.runtime.getPlatformInfo(function (pinfo) {
       if (pinfo.os == 'cros') { // only run on CrOS, other OS is a noop
@@ -208,8 +208,12 @@ function getData(callback) {
       data.ipaddresses = values[9].join(", ");
     }
     if (values[10]) {
-      var userloggedin = new Date(values[10].start_time);
-      data.userlogintime = userloggedin.toLocaleString()
+      if ( ! values[10].start_time ) {
+        userloggedin = 'not available';
+      } else {
+        var userloggedin = new Date(values[10].start_time);
+        data.userlogintime = userloggedin.toLocaleString()
+      }
     }
     callback();
   });
@@ -393,7 +397,7 @@ function refresh_background(alarmname) {
         }
         if ( settings.background_image ) {
           img = new Image;
-          img.crossOrigin = "anonymous";
+          img.crossOrigin = "Anonymous";
           img.onload = draw_background;
           img.src = settings.background_image;
         } else {
