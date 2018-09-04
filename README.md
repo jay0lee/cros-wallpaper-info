@@ -25,8 +25,9 @@ Options for the extension can be set by clicking the extension icon and options.
 
 ## Admin customization
 G Suite admins with Chrome Enterprise managed devices can force install the extension for their users. In order for the extension to work, you must not [set a wallpaper from the admin console](https://support.google.com/chrome/a/answer/2657289?hl=en#3_wallpaper).
-# Manually install the extension in your user profile.
-# Customize the extension options as you'd prefer.
-# Once you're happy with your options, click "Download policy" and save the file locally.
-# [Force install the extension for your users](https://support.google.com/chrome/a/answer/6306504?hl=en).
-# [Set policy for the app by uploading the file you downloaded above.](https://support.google.com/chrome/a/answer/6177447#custom)
+
+1. Manually install the extension in your user profile.
+1. Customize the extension options as you'd prefer.
+1. Once you're happy with your options, click "Download policy" and save the file locally.
+1. [Force install the extension for your users](https://support.google.com/chrome/a/answer/6306504?hl=en).
+1. [Set policy for the app by uploading the file you downloaded above.](https://support.google.com/chrome/a/answer/6177447#custom)
