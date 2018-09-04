@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "text_color": {
+      "type": "string"
+    },
+    "text_font": {
+      "type": "string"
+    },
+    "text_size": {
+      "type": "integer"
+    },
+    "wallpaper_layout": {
+      "type": "string"
+    },
+    "refresh_time": {
+      "type": "integer"
+    },
+    "background_image": {
+      "type": "string"
+    },
+    "background_gradient_color1": {
+      "type": "string"
+    },
+    "background_gradient_color2": {
+      "type": "string"
+    },
+    "info_text_location": {
+      "type": "string"
+    },
+    "info_text": {
+      "type": "string"
+    }
+  }
+}

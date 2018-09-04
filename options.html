@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chrome OS Wallpaper Info Options</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+Refresh time:
+<input type="text" id="refresh_time">
+<br><br>
+
+Gradient color 1:
+<select id="background_gradient_color1">
+</select>
+<br><br>
+
+Gradient color 2:
+<select id="background_gradient_color2">
+</select>
+<br><br>
+
+Background image URL:
+<input type="text" id="background_image" size="25">
+<br><br>
+
+Text color:
+<select id="text_color">
+</select>
+<br><br>
+
+Text font:
+<select id="text_font">
+  <option value="Courier">Courier</option>
+  <option value="Monaco">Monaco</option>
+  <option value="Monospace">Monospace</option>
+</select>
+<br><br>
+
+Text location:
+<select id="info_text_location">
+  <option value="top right">Top right</option>
+  <option value="top left">Top left</option>
+  <option value="bottom right">Bottom right</option>
+  <option value="bottom left">Bottom left</option>
+</select>
+<br><br>
+
+Text size:
+<input type="text" id="text_size">
+<br><br>
+
+Info Text:<br>
+<textarea id="info_text" cols="80" rows="15"></textarea>
+
+<div id="status"></div>
+
+<button id="save">Save</button>
+<button id="defaults">Defaults</button>
+<button id="drawnow">Draw Now</button>
+<button id="dlpolicy">Download Policy</button>
+
+<script src="options.js"></script>
+</body>
+</html>
