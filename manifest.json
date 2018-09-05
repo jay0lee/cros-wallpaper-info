@@ -4,7 +4,7 @@
   "name": "Chrome OS Wallpaper Info",
   "short_name": "CrOS WP Info",
   "description": "Sets wallpaper background to useful device info.",
-  "version": "1.27",
+  "version": "1.28",
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",

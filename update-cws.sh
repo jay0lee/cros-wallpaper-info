@@ -68,11 +68,18 @@ if [ $time_now -gt $expires_at ]; then
   echo -e "access_token=$access_token\nrefresh_token=$refresh_token\nexpires_at=$expires_at" > $my_creds
 fi
 
-# call the CWS API
+# call the CWS API to upload draft
 # https://developer.chrome.com/webstore/using_webstore_api#uploadexisitng
-  api_data=$(curl -vvvv -X PUT  https://www.googleapis.com/upload/chromewebstore/v1.1/items/$appid \
+  api_data=$(curl -s -X PUT https://www.googleapis.com/upload/chromewebstore/v1.1/items/$appid \
     -H "Authorization: Bearer $access_token" \
     -H "x-goog-api-version: 2" \
     -H "Content-Type: application/json" \
     -T $zipfile)
   echo -e "$api_data"
+
+# publish draft
+  publish_data=$(curl -s -X POST https://www.googleapis.com/chromewebstore/v1.1/items/$appid/publish \
+    -H "Authorization: Bearer $access_token"  \
+    -H "x-goog-api-version: 2" \
+    -H "Content-Length: 0")
+  echo -e "$publish_data"
