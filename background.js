@@ -12,8 +12,8 @@ chrome.management.getSelf(function (exinfo) {
   }
 });
 chrome.system.display.getInfo(function (displays) {
-  screen_width = displays[0].modes[0].widthInNativePixels;
-  screen_height = displays[0].modes[0].heightInNativePixels;
+  screen_width = displays[0].modes.slice(-1)[0].widthInNativePixels;
+  screen_height = displays[0].modes.slice(-1)[0].heightInNativePixels;
   use_storage.get('refresh_time', function(values) {
     if ( ! values.refresh_time ) {
       refresh_time = 15;
@@ -96,7 +96,7 @@ function getLocalIPs(callback) { // thanks to https://stackoverflow.com/a/295142
             return;
         }
         var ip = /^candidate:.+ (\S+) \d+ typ/.exec(e.candidate.candidate)[1];
-        if (ips.indexOf(ip) == -1 && ip != "100.115.92.1") // ignore ARC++ IP
+        if (ips.indexOf(ip) == -1 && ip.substring(0, 4) != "100.") // ignore ARC++ IPs
             ips.push(ip);
     };
     pc.createOffer(function(sdp) {
@@ -365,11 +365,11 @@ function refresh_background(alarmname) {
       chrome.system.display.getInfo(function (displays) {
         orientation = screen.orientation.type
         if ( orientation === 'landscape-primary' || orientation === 'landscape-secondary' ) {
-          screen_width = displays[0].modes[0].widthInNativePixels;
-          screen_height = displays[0].modes[0].heightInNativePixels;
+          screen_width = displays[0].modes.slice(-1)[0].widthInNativePixels;
+          screen_height = displays[0].modes.slice(-1)[0].heightInNativePixels;
         } else {
-          screen_height = displays[0].modes[0].widthInNativePixels;
-          screen_width = displays[0].modes[0].heightInNativePixels;
+          screen_height = displays[0].modes.slice(-1)[0].widthInNativePixels;
+          screen_width = displays[0].modes.slice(-1)[0].heightInNativePixels;
         }
         bounds = displays[0].bounds;
         workarea = displays[0].workArea;

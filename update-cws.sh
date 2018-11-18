@@ -2,7 +2,11 @@
 my_creds=~/.`basename $0`
 
 appid=$1
-zipfile=$2
+zipfilepath=$2
+zipfile=$appid.zip
+
+rm $zipfile
+zip -r $zipfile $zipfilepath -x *.git*
 
 # https://developers.google.com/identity/protocols/OAuth2InstalledApp#creatingcred
 client_id='311118430818-9btaroouc454mgp3pe4e5d60t5q0ok61.apps.googleusercontent.com'
@@ -83,3 +87,5 @@ fi
     -H "x-goog-api-version: 2" \
     -H "Content-Length: 0")
   echo -e "$publish_data"
+
+rm $zipfile
