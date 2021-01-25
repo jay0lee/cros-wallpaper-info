@@ -1,3 +1,5 @@
+// Test update
+
 var screen_width;
 var screen_height;
 var img;
@@ -71,6 +73,18 @@ entGetInfo = function (item) {
   });
 }
 
+entGetHWPlatform = function () {
+  return asPromised((callback) => {
+    if ( typeof chrome.enterprise !== "undefined" ) {
+      if ( typeof chrome.enterprise.hardwarePlatform !== "undefined" ) {
+        if ( typeof chrome.enterprise.hardwarePlatform.getHardwarePlatformInfo !== "undefined" ) {
+          chrome.enterprise.hardwarePlatform.getHardwarePlatformInfo(callback);
+        } else { callback('not available'); }
+      } else { callback('not available'); }
+    } else { callback('not available'); }
+  });
+}
+
 getIden = function () {
   return asPromised((callback) => {
     chrome.identity.getProfileUserInfo(callback);
@@ -96,7 +110,7 @@ function getLocalIPs(callback) { // thanks to https://stackoverflow.com/a/295142
             return;
         }
         var ip = /^candidate:.+ (\S+) \d+ typ/.exec(e.candidate.candidate)[1];
-        if (ips.indexOf(ip) == -1 && ip.substring(0, 4) != "100.") // ignore ARC++ IPs
+        if (ips.indexOf(ip) == -1 && ip.substring(0, 11) != "100.115.92.") // ignore ARC++ and container IPs
             ips.push(ip);
     };
     pc.createOffer(function(sdp) {
@@ -124,7 +138,8 @@ function getData(callback) {
                  Promise.resolve(false),  // 7 directory api id
                  Promise.resolve(false),  // 8 user email
                  Promise.resolve(false),  // 9 ip addressess
-                 Promise.resolve(false)   // 10 user login time
+                 Promise.resolve(false),  // 10 user login time
+                 Promise.resolve(false)   // 11 device model
                 ];
   for (i = 0; i < data_needed.length; i++) {
     if (data_needed[i].startsWith('%%cpu')) {
@@ -148,6 +163,10 @@ function getData(callback) {
       mypromises[9] = getIPs();
     } else if (data_needed[i] === '%%userlogintime%%') {
       mypromises[10] = getLocalStorage('start_time');
+    } else if (data_needed[i] === '%%devicemodel%%') {
+      mypromises[11] = entGetHWPlatform().catch(function(error) {
+        return error;
+        });
     } else if (data_needed[i] === '%%osversion%%') {
        var useragent = navigator.userAgent;
        var uaregex = /^.*CrOS .* ([0-9]*\.[0-9]*\.[0-9]*).*$/g;
@@ -166,21 +185,39 @@ function getData(callback) {
   Promise.all(mypromises).then(function(values) {
     console.log(values);
     if (values[0]) {
-      data.cpumodel = values[0].modelName;
+      if (values[0].modelName) {
+        data.cpumodel = values[0].modelName;
+      } else {
+        data.cpumodel = values[0].archName;
+      }
       data.cpumodel = data.cpumodel.replace(/\([^\)]*\)/g, ""); // remove useless info
+      data.cpumodel = data.cpumodel.replace(/(,.*)/g, ""); // remove comma and everything after
       data.cpumodel = data.cpumodel.replace('  ', ' '); // doublespace to single
       data.cpumodel = data.cpumodel.replace(/^ /g, ''); // remove space at start of string
       data.cpumodel = data.cpumodel.replace(/ $/g, ''); // remove space at end of string
       data.cpucores = values[0].numOfProcessors;
-      data.cputempc = values[0].temperatures[0];
-      data.cputempf = ((values[0].temperatures[0] * ( 9 / 5 )) + 32).toFixed(1);
+      if (! isNaN(values[0].temperatures[0])) {
+        data.cputempc = values[0].temperatures[0];
+        data.cputempf = ((values[0].temperatures[0] * ( 9 / 5 )) + 32).toFixed(1);
+      } else {
+        data.cputempc = '??';
+        data.cputempf = '??';
+      }
     }
     if (values[1]) {
       data.memunused = (values[1].availableCapacity/1024/1024/1024).toFixed(2)+'gb';
       data.memtotal = (values[1].capacity/1024/1024/1024).toFixed(2)+'gb';
     }
     if (values[2]) {
-      data.disktotal = (values[2][0].capacity/1024/1024/1024).toFixed(2)+'gb';
+      try {
+        data.disktotal = (values[2][0].capacity/1024/1024/1024).toFixed(2)+'gb';
+      } catch (e) {
+	if (e instanceof TypeError) {
+          data.disktotal = 'unknown gb';
+	} else {
+	  throw e;
+	}
+      }
     }
     if (values[3]) {
       data.diskfree = (values[3].quota/1024/1024/1024).toFixed(2)+'gb';
@@ -214,6 +251,9 @@ function getData(callback) {
         var userloggedin = new Date(values[10].start_time);
         data.userlogintime = userloggedin.toLocaleString()
       }
+    }
+    if (values[11]) {
+      data.devicemodel = values[11].manufacturer+' '+values[11].model;
     }
     callback();
   });
